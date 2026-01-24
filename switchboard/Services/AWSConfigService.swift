@@ -203,8 +203,9 @@ class AWSConfigService: ObservableObject {
                 withTimeInterval: debounceInterval,
                 repeats: false
             ) { [weak self] _ in
+                guard let self = self else { return }
                 Task { @MainActor in
-                    await self?.reloadAndNotify()
+                    await self.reloadAndNotify()
                 }
             }
         }
