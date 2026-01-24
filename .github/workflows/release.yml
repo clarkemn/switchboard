@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-14
+            arch: arm64
+            artifact_name: switchboard-darwin-arm64
+          - os: macos-13
+            arch: x86_64
+            artifact_name: switchboard-darwin-amd64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "5.9"
+
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Run Tests
+        run: swift test
+
+      - name: Build App Bundle
+        run: ./build.sh release
+
+      - name: Verify App Bundle
+        run: |
+          test -d ".build/Switchboard.app"
+          codesign --verify --verbose ".build/Switchboard.app"
+
+      - name: Create Tarball
+        run: |
+          cd .build
+          tar -czvf switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz Switchboard.app
+          shasum -a 256 switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz > switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz.sha256
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            .build/switchboard-*.tar.gz
+            .build/switchboard-*.sha256
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List Artifacts
+        run: ls -la artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.sha256
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    name: Update Homebrew Tap
+    steps:
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update Homebrew Formula (ARM64)
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: switchboard
+          formula-path: Formula/switchboard.rb
+          homebrew-tap: clarkemn/homebrew-tap
+          download-url: https://github.com/clarkemn/switchboard/releases/download/v${{ steps.version.outputs.version }}/switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz
+          commit-message: |
+            Update switchboard to ${{ steps.version.outputs.version }} (ARM64)
+        env:
+          COMMITTER_TOKEN: ${{ secrets.PAT }}
+
+      - name: Update Homebrew Formula (Intel)
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: switchboard
+          formula-path: Formula/switchboard.rb
+          homebrew-tap: clarkemn/homebrew-tap
+          download-url: https://github.com/clarkemn/switchboard/releases/download/v${{ steps.version.outputs.version }}/switchboard-${{ steps.version.outputs.version }}-darwin-amd64.tar.gz
+          commit-message: |
+            Update switchboard to ${{ steps.version.outputs.version }} (Intel)
+        env:
+          COMMITTER_TOKEN: ${{ secrets.PAT }}
