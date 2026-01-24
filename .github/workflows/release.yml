@@ -39,15 +39,9 @@ jobs:
           test -d ".build/Switchboard.app"
           codesign --verify --verbose ".build/Switchboard.app"
 
-      - name: Debug - List .build contents
-        run: |
-          echo "Contents of .build directory:"
-          ls -la .build/
-
       - name: Create Tarball
         run: |
-          cd .build
-          tar -czvf switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz Switchboard.app
+          tar -czvf switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz -C .build Switchboard.app
           shasum -a 256 switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz > switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz.sha256
           echo "Created files:"
           ls -la switchboard-*
@@ -58,8 +52,8 @@ jobs:
         with:
           name: switchboard-darwin-arm64
           path: |
-            .build/switchboard-*.tar.gz
-            .build/switchboard-*.sha256
+            switchboard-*.tar.gz
+            switchboard-*.sha256
           if-no-files-found: error
 
   release:
