@@ -14,7 +14,7 @@ jobs:
           - os: macos-14
             arch: arm64
             artifact_name: switchboard-darwin-arm64
-          - os: macos-13
+          - os: macos-14-large
             arch: x86_64
             artifact_name: switchboard-darwin-amd64
     steps:
@@ -44,19 +44,28 @@ jobs:
           test -d ".build/Switchboard.app"
           codesign --verify --verbose ".build/Switchboard.app"
 
+      - name: Debug - List .build contents
+        run: |
+          echo "Contents of .build directory:"
+          ls -la .build/
+
       - name: Create Tarball
         run: |
           cd .build
           tar -czvf switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz Switchboard.app
           shasum -a 256 switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz > switchboard-${{ steps.version.outputs.version }}-darwin-${{ matrix.arch }}.tar.gz.sha256
+          echo "Created files:"
+          ls -la switchboard-*
 
       - name: Upload Artifact
+        if: success()
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
           path: |
             .build/switchboard-*.tar.gz
             .build/switchboard-*.sha256
+          if-no-files-found: error
 
   release:
     needs: build
