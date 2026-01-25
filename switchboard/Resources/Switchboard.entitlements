@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Disable App Sandbox to access ~/.aws/ directory -->
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+
+	<!-- Allow AppleScript execution for terminal launching -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+
+	<!-- Disable library validation to allow loading frameworks -->
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+
+	<!-- Allow JIT for better performance (optional) -->
+	<key>com.apple.security.cs.allow-jit</key>
+	<true/>
+
+	<!-- Allow unsigned executable memory (optional) -->
+	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+	<true/>
+
+	<!-- Network client (for AWS API calls) -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+</dict>
+</plist>

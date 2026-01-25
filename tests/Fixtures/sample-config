@@ -1,0 +1,32 @@
+# Sample AWS Config File for Testing
+
+[default]
+region = us-east-1
+output = json
+
+[profile dev]
+region = us-west-2
+output = json
+
+[profile staging]
+role_arn = arn:aws:iam::111111111111:role/AdminRole
+source_profile = dev
+region = us-west-2
+duration_seconds = 3600
+
+[profile production]
+role_arn = arn:aws:iam::222222222222:role/AdminRole
+source_profile = dev
+region = us-east-1
+duration_seconds = 3600
+
+[profile sandbox-sso]
+sso_start_url = https://mycompany.awsapps.com/start
+sso_region = us-east-1
+sso_account_id = 333333333333
+sso_role_name = AdministratorAccess
+region = us-east-1
+
+[profile test-env]
+region = eu-west-1
+output = yaml

@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "5.9"
+
+      - name: Get Version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Run Tests
+        run: swift test
+
+      - name: Build App Bundle
+        run: ./build.sh release
+
+      - name: Verify App Bundle
+        run: |
+          test -d ".build/Switchboard.app"
+          codesign --verify --verbose ".build/Switchboard.app"
+
+      - name: Create Tarball
+        run: |
+          tar -czvf switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz -C .build Switchboard.app
+          shasum -a 256 switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz > switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz.sha256
+          echo "Created files:"
+          ls -la switchboard-*
+
+      - name: Upload Artifact
+        if: success()
+        uses: actions/upload-artifact@v6
+        with:
+          name: switchboard-darwin-arm64
+          path: |
+            switchboard-*.tar.gz
+            switchboard-*.sha256
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List Artifacts
+        run: ls -la artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.sha256
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    name: Update Homebrew Tap
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Get Version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update Homebrew Formula
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: switchboard
+          formula-path: Formula/switchboard.rb
+          homebrew-tap: clarkemn/homebrew-tap
+          download-url: https://github.com/clarkemn/switchboard/releases/download/v${{ steps.version.outputs.version }}/switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz
+          commit-message: |
+            Update switchboard to ${{ steps.version.outputs.version }}
+        env:
+          COMMITTER_TOKEN: ${{ secrets.PAT }}

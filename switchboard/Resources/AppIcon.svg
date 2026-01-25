@@ -1,0 +1,156 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#1E40AF"/>
+    </linearGradient>
+
+    <!-- Metallic panel gradient -->
+    <linearGradient id="panelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4B5563"/>
+      <stop offset="50%" style="stop-color:#374151"/>
+      <stop offset="100%" style="stop-color:#1F2937"/>
+    </linearGradient>
+
+    <!-- Active connection glow -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Jack hole gradient -->
+    <radialGradient id="holeGradient" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:#1F2937"/>
+      <stop offset="100%" style="stop-color:#030712"/>
+    </radialGradient>
+
+    <!-- Plug gradient -->
+    <linearGradient id="plugGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FCD34D"/>
+      <stop offset="50%" style="stop-color:#F59E0B"/>
+      <stop offset="100%" style="stop-color:#D97706"/>
+    </linearGradient>
+
+    <!-- Active plug gradient (green/teal for AWS) -->
+    <linearGradient id="activePlugGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34D399"/>
+      <stop offset="50%" style="stop-color:#10B981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+
+    <!-- Cable gradient -->
+    <linearGradient id="cableGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#374151"/>
+      <stop offset="50%" style="stop-color:#4B5563"/>
+      <stop offset="100%" style="stop-color:#374151"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square (macOS style) -->
+  <rect x="40" y="40" width="944" height="944" rx="180" ry="180" fill="url(#bgGradient)"/>
+
+  <!-- Inner shadow/border -->
+  <rect x="60" y="60" width="904" height="904" rx="165" ry="165" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+
+  <!-- Switchboard panel -->
+  <rect x="140" y="180" width="744" height="664" rx="40" ry="40" fill="url(#panelGradient)"/>
+
+  <!-- Panel border/bevel -->
+  <rect x="140" y="180" width="744" height="664" rx="40" ry="40" fill="none" stroke="#6B7280" stroke-width="4"/>
+  <rect x="148" y="188" width="728" height="648" rx="36" ry="36" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+
+  <!-- Label plate -->
+  <rect x="340" y="210" width="344" height="50" rx="8" ry="8" fill="#1F2937"/>
+  <rect x="340" y="210" width="344" height="50" rx="8" ry="8" fill="none" stroke="#4B5563" stroke-width="2"/>
+  <text x="512" y="245" font-family="SF Pro Display, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="600" fill="#9CA3AF" text-anchor="middle">SWITCHBOARD</text>
+
+  <!-- Grid of jack holes (4x3) -->
+  <!-- Row 1 -->
+  <circle cx="280" cy="380" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="280" cy="380" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="436" cy="380" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="436" cy="380" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="592" cy="380" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="592" cy="380" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="748" cy="380" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="748" cy="380" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <!-- Row 2 -->
+  <circle cx="280" cy="530" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="280" cy="530" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="436" cy="530" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="436" cy="530" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="592" cy="530" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="592" cy="530" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="748" cy="530" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="748" cy="530" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <!-- Row 3 -->
+  <circle cx="280" cy="680" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="280" cy="680" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="436" cy="680" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="436" cy="680" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="592" cy="680" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="592" cy="680" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <circle cx="748" cy="680" r="36" fill="url(#holeGradient)" stroke="#1F2937" stroke-width="4"/>
+  <circle cx="748" cy="680" r="28" fill="none" stroke="#374151" stroke-width="2"/>
+
+  <!-- Connection cable 1 (connecting two jacks) -->
+  <path d="M 280 530 Q 280 600, 358 620 Q 436 640, 436 680"
+        fill="none" stroke="#1F2937" stroke-width="18" stroke-linecap="round"/>
+  <path d="M 280 530 Q 280 600, 358 620 Q 436 640, 436 680"
+        fill="none" stroke="url(#cableGradient)" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Connection cable 2 -->
+  <path d="M 592 380 Q 670 400, 710 455 Q 748 510, 748 530"
+        fill="none" stroke="#1F2937" stroke-width="18" stroke-linecap="round"/>
+  <path d="M 592 380 Q 670 400, 710 455 Q 748 510, 748 530"
+        fill="none" stroke="url(#cableGradient)" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Plugs (some inserted) -->
+  <!-- Active plug (top-left, highlighted green) -->
+  <g filter="url(#glow)">
+    <ellipse cx="280" cy="380" rx="22" ry="22" fill="url(#activePlugGradient)"/>
+    <ellipse cx="280" cy="375" rx="14" ry="10" fill="rgba(255,255,255,0.3)"/>
+  </g>
+
+  <!-- Plug at 280,530 (cable start) -->
+  <ellipse cx="280" cy="530" rx="22" ry="22" fill="url(#plugGradient)"/>
+  <ellipse cx="280" cy="525" rx="14" ry="10" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- Plug at 436,680 (cable end) -->
+  <ellipse cx="436" cy="680" rx="22" ry="22" fill="url(#plugGradient)"/>
+  <ellipse cx="436" cy="675" rx="14" ry="10" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- Plug at 592,380 (cable start) -->
+  <ellipse cx="592" cy="380" rx="22" ry="22" fill="url(#plugGradient)"/>
+  <ellipse cx="592" cy="375" rx="14" ry="10" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- Plug at 748,530 (cable end) -->
+  <ellipse cx="748" cy="530" rx="22" ry="22" fill="url(#plugGradient)"/>
+  <ellipse cx="748" cy="525" rx="14" ry="10" fill="rgba(255,255,255,0.3)"/>
+
+  <!-- Small indicator lights -->
+  <circle cx="200" cy="760" r="12" fill="#059669"/>
+  <circle cx="200" cy="760" r="8" fill="#34D399"/>
+  <circle cx="200" cy="757" r="4" fill="rgba(255,255,255,0.5)"/>
+
+  <circle cx="240" cy="760" r="12" fill="#6B7280"/>
+  <circle cx="240" cy="760" r="8" fill="#9CA3AF"/>
+
+  <circle cx="280" cy="760" r="12" fill="#6B7280"/>
+  <circle cx="280" cy="760" r="8" fill="#9CA3AF"/>
+</svg>

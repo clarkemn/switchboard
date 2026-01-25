@@ -1,0 +1,10 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Release artifacts
+dist/
+*.dmg
+*.zip
+*.sha256
