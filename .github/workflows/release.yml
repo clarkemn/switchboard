@@ -106,7 +106,7 @@ jobs:
         uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: switchboard
-          formula-path: Formula/switchboard.rb
+          formula-path: Casks/switchboard.rb
           homebrew-tap: clarkemn/homebrew-tap
           download-url: https://github.com/clarkemn/switchboard/releases/download/v${{ steps.version.outputs.version }}/switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz
           commit-message: |
