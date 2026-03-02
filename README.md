@@ -21,8 +21,7 @@ A native macOS application for [Granted](https://granted.dev).
 ### Via Homebrew
 
 ```bash
-brew tap clarkemn/switchboard
-brew install switchboard
+brew install --cask clarkemn/tap/switchboard
 ```
 
 ### From Source
