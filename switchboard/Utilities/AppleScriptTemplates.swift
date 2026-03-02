@@ -120,6 +120,55 @@ enum AppleScriptTemplates {
         """
     }
 
+
+    // MARK: - Ghostty
+
+    /// Generate AppleScript for Ghostty terminal with Granted assume
+    /// - Parameter profileName: AWS profile name to assume
+    /// - Returns: AppleScript string
+    static func ghostty(profileName: String) -> String {
+        let escapedProfile = profileName.escapedForAppleScript
+        return """
+        tell application id "com.mitchellh.ghostty"
+            activate
+        end tell
+
+        delay 0.5
+
+        tell application "System Events"
+            tell process "Ghostty"
+                keystroke "n" using command down
+                delay 0.3
+                keystroke "assume '\(escapedProfile)'"
+                keystroke return
+            end tell
+        end tell
+        """
+    }
+
+    /// Generate AppleScript for Ghostty terminal with Granted assume -c (console)
+    /// - Parameter profileName: AWS profile name to assume
+    /// - Returns: AppleScript string
+    static func ghosttyConsole(profileName: String) -> String {
+        let escapedProfile = profileName.escapedForAppleScript
+        return """
+        tell application id "com.mitchellh.ghostty"
+            activate
+        end tell
+
+        delay 0.5
+
+        tell application "System Events"
+            tell process "Ghostty"
+                keystroke "n" using command down
+                delay 0.3
+                keystroke "assume -c '\(escapedProfile)'"
+                keystroke return
+            end tell
+        end tell
+        """
+    }
+
 }
 
 // MARK: - String Escaping Extensions

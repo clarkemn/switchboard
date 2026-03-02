@@ -44,6 +44,7 @@ class TerminalService {
         case terminal = "Terminal"
         case iTerm2 = "iTerm"
         case warp = "Warp"
+        case ghostty = "Ghostty"
 
         var id: String { rawValue }
 
@@ -53,6 +54,7 @@ class TerminalService {
             case .terminal: return "Terminal.app"
             case .iTerm2: return "iTerm2"
             case .warp: return "Warp"
+            case .ghostty: return "Ghostty"
             }
         }
 
@@ -62,6 +64,7 @@ class TerminalService {
             case .terminal: return "com.apple.Terminal"
             case .iTerm2: return "com.googlecode.iterm2"
             case .warp: return "dev.warp.Warp-Stable"
+            case .ghostty: return "com.mitchellh.ghostty"
             }
         }
 
@@ -149,6 +152,10 @@ class TerminalService {
             script = forConsole
                 ? AppleScriptTemplates.warpConsole(profileName: profileName)
                 : AppleScriptTemplates.warp(profileName: profileName)
+        case .ghostty:
+            script = forConsole
+                ? AppleScriptTemplates.ghosttyConsole(profileName: profileName)
+                : AppleScriptTemplates.ghostty(profileName: profileName)
         }
 
         var error: NSDictionary?
