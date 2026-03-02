@@ -102,14 +102,18 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Update Homebrew Formula
-        uses: mislav/bump-homebrew-formula-action@v3
-        with:
-          formula-name: switchboard
-          formula-path: Casks/switchboard.rb
-          homebrew-tap: clarkemn/homebrew-tap
-          download-url: https://github.com/clarkemn/switchboard/releases/download/v${{ steps.version.outputs.version }}/switchboard-${{ steps.version.outputs.version }}-darwin-arm64.tar.gz
-          commit-message: |
-            Update switchboard to ${{ steps.version.outputs.version }}
+      - name: Update Homebrew Cask
         env:
-          COMMITTER_TOKEN: ${{ secrets.PAT }}
+          GH_TOKEN: ${{ secrets.PAT }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          SHA256=$(curl -sL "https://github.com/clarkemn/switchboard/releases/download/v${VERSION}/switchboard-${VERSION}-darwin-arm64.tar.gz.sha256" | awk '{print $1}')
+          git clone https://x-access-token:${GH_TOKEN}@github.com/clarkemn/homebrew-tap.git /tmp/homebrew-tap
+          cd /tmp/homebrew-tap
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Casks/switchboard.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${SHA256}\"/" Casks/switchboard.rb
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add Casks/switchboard.rb
+          git commit -m "Update switchboard to ${VERSION}"
+          git push
