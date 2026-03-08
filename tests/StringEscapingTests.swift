@@ -109,26 +109,6 @@ final class StringEscapingTests: XCTestCase {
         XCTAssertTrue(script.contains("assume -c 'test-profile'"))
     }
 
-    func testAppleScriptTemplate_Ghostty() {
-        let profileName = "test-profile"
-        let script = AppleScriptTemplates.ghostty(profileName: profileName)
-
-        XCTAssertTrue(script.contains("com.mitchellh.ghostty"))
-        XCTAssertTrue(script.contains("keystroke \"n\" using command down"))
-        XCTAssertTrue(script.contains("assume 'test-profile'"))
-        XCTAssertTrue(script.contains("keystroke return"))
-    }
-
-    func testAppleScriptTemplate_GhosttyConsole() {
-        let profileName = "test-profile"
-        let script = AppleScriptTemplates.ghosttyConsole(profileName: profileName)
-
-        XCTAssertTrue(script.contains("com.mitchellh.ghostty"))
-        XCTAssertTrue(script.contains("keystroke \"n\" using command down"))
-        XCTAssertTrue(script.contains("assume -c 'test-profile'"))
-        XCTAssertTrue(script.contains("keystroke return"))
-    }
-
     // MARK: - Shell Escaping Tests
 
     func testShellEscaping_SimpleString() {

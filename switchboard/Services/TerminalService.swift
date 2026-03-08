@@ -78,8 +78,8 @@ class TerminalService {
         /// Warp and Ghostty rely on System Events keystrokes, which require Accessibility access.
         var requiresSystemEventsAccess: Bool {
             switch self {
-            case .terminal, .iTerm2: return false
-            case .warp, .ghostty: return true
+            case .terminal, .iTerm2, .ghostty: return false
+            case .warp: return true
             }
         }
     }
@@ -139,8 +139,36 @@ class TerminalService {
 
     // MARK: - Private Methods
 
+    /// Launch Ghostty using CLI Process (no Accessibility permissions needed)
+    private func launchViaProcess(terminal: Terminal, profileName: String, forConsole: Bool) throws {
+        let ghosttyURL: URL
+        if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: terminal.bundleIdentifier) {
+            ghosttyURL = appURL.appendingPathComponent("Contents/MacOS/ghostty")
+        } else {
+            throw TerminalLaunchError.terminalNotInstalled(name: terminal.displayName)
+        }
+
+        let args = GhosttyCommands.ghosttyArgs(profileName: profileName, forConsole: forConsole)
+
+        let process = Process()
+        process.executableURL = ghosttyURL
+        process.arguments = args
+
+        do {
+            try process.run()
+        } catch {
+            throw TerminalLaunchError.launchFailed(terminal: terminal.displayName, reason: error.localizedDescription)
+        }
+    }
+
     /// Launch terminal using AppleScript
     private func launchViaAppleScript(terminal: Terminal, profileName: String, forConsole: Bool) throws {
+        // Ghostty uses CLI-based launching (no Accessibility permissions needed)
+        if terminal == .ghostty {
+            try launchViaProcess(terminal: terminal, profileName: profileName, forConsole: forConsole)
+            return
+        }
+
         let script: String
 
         switch terminal {
@@ -157,9 +185,7 @@ class TerminalService {
                 ? AppleScriptTemplates.warpConsole(profileName: profileName)
                 : AppleScriptTemplates.warp(profileName: profileName)
         case .ghostty:
-            script = forConsole
-                ? AppleScriptTemplates.ghosttyConsole(profileName: profileName)
-                : AppleScriptTemplates.ghostty(profileName: profileName)
+            fatalError("Ghostty should be handled by launchViaProcess")
         }
 
         var error: NSDictionary?

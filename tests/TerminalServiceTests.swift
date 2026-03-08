@@ -31,8 +31,8 @@ final class TerminalServiceTests: XCTestCase {
         XCTAssertTrue(TerminalService.Terminal.warp.requiresSystemEventsAccess)
     }
 
-    func testRequiresSystemEventsAccess_Ghostty_IsTrue() {
-        XCTAssertTrue(TerminalService.Terminal.ghostty.requiresSystemEventsAccess)
+    func testRequiresSystemEventsAccess_Ghostty_IsFalse() {
+        XCTAssertFalse(TerminalService.Terminal.ghostty.requiresSystemEventsAccess)
     }
 
     // MARK: - requiresAccessibilityPermissions
@@ -52,9 +52,9 @@ final class TerminalServiceTests: XCTestCase {
         XCTAssertTrue(service.requiresAccessibilityPermissions(.warp))
     }
 
-    func testRequiresAccessibilityPermissions_Ghostty_IsTrue() {
+    func testRequiresAccessibilityPermissions_Ghostty_IsFalse() {
         let service = TerminalService()
-        XCTAssertTrue(service.requiresAccessibilityPermissions(.ghostty))
+        XCTAssertFalse(service.requiresAccessibilityPermissions(.ghostty))
     }
 
     // MARK: - Warp and Ghostty AppleScript templates use System Events
@@ -64,12 +64,6 @@ final class TerminalServiceTests: XCTestCase {
 
     func testWarpScript_UsesSystemEvents() {
         let script = AppleScriptTemplates.warp(profileName: "test")
-        XCTAssertTrue(script.contains("tell application \"System Events\""))
-        XCTAssertTrue(script.contains("keystroke"))
-    }
-
-    func testGhosttyScript_UsesSystemEvents() {
-        let script = AppleScriptTemplates.ghostty(profileName: "test")
         XCTAssertTrue(script.contains("tell application \"System Events\""))
         XCTAssertTrue(script.contains("keystroke"))
     }
