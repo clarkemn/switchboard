@@ -171,6 +171,23 @@ enum AppleScriptTemplates {
 
 }
 
+// MARK: - Ghostty CLI Commands
+
+/// Command arguments for launching Ghostty via CLI (no AppleScript/Accessibility needed)
+enum GhosttyCommands {
+
+    /// Build arguments for `ghostty` CLI to run assume command
+    /// - Parameters:
+    ///   - profileName: AWS profile name to assume
+    ///   - forConsole: Whether to use assume -c (console mode)
+    /// - Returns: Array of arguments to pass to the ghostty process
+    static func ghosttyArgs(profileName: String, forConsole: Bool) -> [String] {
+        let escapedProfile = profileName.escapedForShell
+        let assumeCmd = forConsole ? "assume -c" : "assume"
+        return ["-e", "bash", "-c", "\(assumeCmd) '\(escapedProfile)'; exec bash"]
+    }
+}
+
 // MARK: - String Escaping Extensions
 
 extension String {

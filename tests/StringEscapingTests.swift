@@ -161,6 +161,23 @@ final class StringEscapingTests: XCTestCase {
         XCTAssertEqual(input.escapedForShell, "profile-with_special.chars@123")
     }
 
+    // MARK: - Ghostty CLI Command Tests
+
+    func testGhosttyCommand_Assume() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: false)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'test-profile'; exec bash"])
+    }
+
+    func testGhosttyCommand_AssumeConsole() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: true)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume -c 'test-profile'; exec bash"])
+    }
+
+    func testGhosttyCommand_WithQuotesInProfile() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "it's-my-profile", forConsole: false)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'it'\\''s-my-profile'; exec bash"])
+    }
+
     // MARK: - Edge Cases
 
     func testEscaping_UnicodeCharacters() {
