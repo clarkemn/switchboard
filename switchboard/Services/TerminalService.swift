@@ -73,10 +73,14 @@ class TerminalService {
             NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleIdentifier) != nil
         }
 
-        /// Whether this terminal supports AppleScript automation
-        var supportsAppleScript: Bool {
-            // All supported terminals now use AppleScript
-            return true
+        /// Whether this terminal requires Accessibility permissions (System Events keystroke access)
+        /// Terminal.app and iTerm2 have native AppleScript dictionaries and don't need this.
+        /// Warp and Ghostty rely on System Events keystrokes, which require Accessibility access.
+        var requiresSystemEventsAccess: Bool {
+            switch self {
+            case .terminal, .iTerm2: return false
+            case .warp, .ghostty: return true
+            }
         }
     }
 
@@ -92,7 +96,7 @@ class TerminalService {
     /// - Parameter terminal: Terminal to check
     /// - Returns: True if the terminal requires Accessibility permissions
     func requiresAccessibilityPermissions(_ terminal: Terminal) -> Bool {
-        return terminal.supportsAppleScript
+        return terminal.requiresSystemEventsAccess
     }
 
     /// Open System Settings to the Accessibility privacy pane
