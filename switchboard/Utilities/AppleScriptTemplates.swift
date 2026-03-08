@@ -121,54 +121,23 @@ enum AppleScriptTemplates {
     }
 
 
-    // MARK: - Ghostty
+}
 
-    /// Generate AppleScript for Ghostty terminal with Granted assume
-    /// - Parameter profileName: AWS profile name to assume
-    /// - Returns: AppleScript string
-    static func ghostty(profileName: String) -> String {
-        let escapedProfile = profileName.escapedForAppleScript
-        return """
-        tell application id "com.mitchellh.ghostty"
-            activate
-        end tell
+// MARK: - Ghostty CLI Commands
 
-        delay 0.5
+/// Command arguments for launching Ghostty via CLI (no AppleScript/Accessibility needed)
+enum GhosttyCommands {
 
-        tell application "System Events"
-            tell process "Ghostty"
-                keystroke "n" using command down
-                delay 0.3
-                keystroke "assume '\(escapedProfile)'"
-                keystroke return
-            end tell
-        end tell
-        """
+    /// Build arguments for `ghostty` CLI to run assume command
+    /// - Parameters:
+    ///   - profileName: AWS profile name to assume
+    ///   - forConsole: Whether to use assume -c (console mode)
+    /// - Returns: Array of arguments to pass to the ghostty process
+    static func ghosttyArgs(profileName: String, forConsole: Bool) -> [String] {
+        let escapedProfile = profileName.escapedForShell
+        let assumeCmd = forConsole ? "assume -c" : "assume"
+        return ["-e", "bash", "-c", "\(assumeCmd) '\(escapedProfile)'; exec bash"]
     }
-
-    /// Generate AppleScript for Ghostty terminal with Granted assume -c (console)
-    /// - Parameter profileName: AWS profile name to assume
-    /// - Returns: AppleScript string
-    static func ghosttyConsole(profileName: String) -> String {
-        let escapedProfile = profileName.escapedForAppleScript
-        return """
-        tell application id "com.mitchellh.ghostty"
-            activate
-        end tell
-
-        delay 0.5
-
-        tell application "System Events"
-            tell process "Ghostty"
-                keystroke "n" using command down
-                delay 0.3
-                keystroke "assume -c '\(escapedProfile)'"
-                keystroke return
-            end tell
-        end tell
-        """
-    }
-
 }
 
 // MARK: - String Escaping Extensions
@@ -180,5 +149,11 @@ extension String {
         self
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'")
+    }
+
+    /// Escape string for use in single-quoted shell arguments
+    /// Uses the '\'' pattern to break out of single quotes safely
+    var escapedForShell: String {
+        self.replacingOccurrences(of: "'", with: "'\\''")
     }
 }

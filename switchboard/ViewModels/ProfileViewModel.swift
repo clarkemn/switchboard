@@ -191,10 +191,15 @@ class ProfileViewModel: ObservableObject {
 
     /// Check accessibility permissions and update warning status
     func checkAccessibilityPermissions() {
-        hasAccessibilityPermissions = terminalService.hasAccessibilityPermissions()
-
-        // Show warning if selected terminal needs Accessibility permissions but they're not granted
         let needsPermissions = terminalService.requiresAccessibilityPermissions(selectedTerminal)
+
+        if needsPermissions {
+            // Use prompt: true to trigger the system dialog on first check
+            hasAccessibilityPermissions = terminalService.hasAccessibilityPermissions(prompt: true)
+        } else {
+            hasAccessibilityPermissions = true
+        }
+
         showAccessibilityWarning = needsPermissions && !hasAccessibilityPermissions
 
         // Auto-clear error message if permissions are now granted or if terminal doesn't need them

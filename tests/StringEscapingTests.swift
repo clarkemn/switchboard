@@ -109,24 +109,53 @@ final class StringEscapingTests: XCTestCase {
         XCTAssertTrue(script.contains("assume -c 'test-profile'"))
     }
 
-    func testAppleScriptTemplate_Ghostty() {
-        let profileName = "test-profile"
-        let script = AppleScriptTemplates.ghostty(profileName: profileName)
+    // MARK: - Shell Escaping Tests
 
-        XCTAssertTrue(script.contains("com.mitchellh.ghostty"))
-        XCTAssertTrue(script.contains("keystroke \"n\" using command down"))
-        XCTAssertTrue(script.contains("assume 'test-profile'"))
-        XCTAssertTrue(script.contains("keystroke return"))
+    func testShellEscaping_SimpleString() {
+        let input = "my-profile"
+        XCTAssertEqual(input.escapedForShell, "my-profile")
     }
 
-    func testAppleScriptTemplate_GhosttyConsole() {
-        let profileName = "test-profile"
-        let script = AppleScriptTemplates.ghosttyConsole(profileName: profileName)
+    func testShellEscaping_SingleQuote() {
+        let input = "it's-my-profile"
+        XCTAssertEqual(input.escapedForShell, "it'\\''s-my-profile")
+    }
 
-        XCTAssertTrue(script.contains("com.mitchellh.ghostty"))
-        XCTAssertTrue(script.contains("keystroke \"n\" using command down"))
-        XCTAssertTrue(script.contains("assume -c 'test-profile'"))
-        XCTAssertTrue(script.contains("keystroke return"))
+    func testShellEscaping_MultipleQuotes() {
+        let input = "it's a 'quoted' profile"
+        XCTAssertEqual(input.escapedForShell, "it'\\''s a '\\''quoted'\\'' profile")
+    }
+
+    func testShellEscaping_Backslash() {
+        let input = "path\\to\\profile"
+        XCTAssertEqual(input.escapedForShell, "path\\to\\profile")
+    }
+
+    func testShellEscaping_EmptyString() {
+        let input = ""
+        XCTAssertEqual(input.escapedForShell, "")
+    }
+
+    func testShellEscaping_SpecialCharacters() {
+        let input = "profile-with_special.chars@123"
+        XCTAssertEqual(input.escapedForShell, "profile-with_special.chars@123")
+    }
+
+    // MARK: - Ghostty CLI Command Tests
+
+    func testGhosttyCommand_Assume() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: false)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'test-profile'; exec bash"])
+    }
+
+    func testGhosttyCommand_AssumeConsole() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: true)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume -c 'test-profile'; exec bash"])
+    }
+
+    func testGhosttyCommand_WithQuotesInProfile() {
+        let args = GhosttyCommands.ghosttyArgs(profileName: "it's-my-profile", forConsole: false)
+        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'it'\\''s-my-profile'; exec bash"])
     }
 
     // MARK: - Edge Cases
