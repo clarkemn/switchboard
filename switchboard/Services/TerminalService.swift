@@ -87,8 +87,13 @@ class TerminalService {
     // MARK: - Public Methods
 
     /// Check if the app has Accessibility permissions
+    /// - Parameter prompt: If true, shows the system dialog to request permissions
     /// - Returns: True if Accessibility permissions are granted
-    func hasAccessibilityPermissions() -> Bool {
+    func hasAccessibilityPermissions(prompt: Bool = false) -> Bool {
+        if prompt {
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+            return AXIsProcessTrustedWithOptions(options)
+        }
         return AXIsProcessTrusted()
     }
 
@@ -99,10 +104,15 @@ class TerminalService {
         return terminal.requiresSystemEventsAccess
     }
 
-    /// Open System Settings to the Accessibility privacy pane
+    /// Request Accessibility permissions via system prompt, with fallback to System Settings
     func openAccessibilitySettings() {
-        let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
-        NSWorkspace.shared.open(url)
+        // Try the system prompt first
+        let granted = hasAccessibilityPermissions(prompt: true)
+        if !granted {
+            // Also open System Settings as fallback
+            let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
+            NSWorkspace.shared.open(url)
+        }
     }
 
     /// Detect all installed terminal applications
