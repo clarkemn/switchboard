@@ -181,4 +181,10 @@ extension String {
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'")
     }
+
+    /// Escape string for use in single-quoted shell arguments
+    /// Uses the '\'' pattern to break out of single quotes safely
+    var escapedForShell: String {
+        self.replacingOccurrences(of: "'", with: "'\\''")
+    }
 }

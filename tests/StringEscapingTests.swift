@@ -129,6 +129,38 @@ final class StringEscapingTests: XCTestCase {
         XCTAssertTrue(script.contains("keystroke return"))
     }
 
+    // MARK: - Shell Escaping Tests
+
+    func testShellEscaping_SimpleString() {
+        let input = "my-profile"
+        XCTAssertEqual(input.escapedForShell, "my-profile")
+    }
+
+    func testShellEscaping_SingleQuote() {
+        let input = "it's-my-profile"
+        XCTAssertEqual(input.escapedForShell, "it'\\''s-my-profile")
+    }
+
+    func testShellEscaping_MultipleQuotes() {
+        let input = "it's a 'quoted' profile"
+        XCTAssertEqual(input.escapedForShell, "it'\\''s a '\\''quoted'\\'' profile")
+    }
+
+    func testShellEscaping_Backslash() {
+        let input = "path\\to\\profile"
+        XCTAssertEqual(input.escapedForShell, "path\\to\\profile")
+    }
+
+    func testShellEscaping_EmptyString() {
+        let input = ""
+        XCTAssertEqual(input.escapedForShell, "")
+    }
+
+    func testShellEscaping_SpecialCharacters() {
+        let input = "profile-with_special.chars@123"
+        XCTAssertEqual(input.escapedForShell, "profile-with_special.chars@123")
+    }
+
     // MARK: - Edge Cases
 
     func testEscaping_UnicodeCharacters() {
