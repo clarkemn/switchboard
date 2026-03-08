@@ -45,7 +45,8 @@ let package = Package(
             sources: [
                 "INIParserTests.swift",
                 "AWSProfileTests.swift",
-                "StringEscapingTests.swift"
+                "StringEscapingTests.swift",
+                "TerminalServiceTests.swift"
             ]
         )
     ]
