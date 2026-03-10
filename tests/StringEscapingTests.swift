@@ -145,17 +145,27 @@ final class StringEscapingTests: XCTestCase {
 
     func testGhosttyCommand_Assume() {
         let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: false)
-        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'test-profile'; exec bash"])
+        XCTAssertEqual(args[0], "-e")
+        XCTAssertEqual(args[2], "-l")
+        XCTAssertEqual(args[3], "-c")
+        XCTAssertTrue(args[4].contains("assume 'test-profile'"))
+        XCTAssertFalse(args[4].contains("assume -c"))
     }
 
     func testGhosttyCommand_AssumeConsole() {
         let args = GhosttyCommands.ghosttyArgs(profileName: "test-profile", forConsole: true)
-        XCTAssertEqual(args, ["-e", "bash", "-c", "assume -c 'test-profile'; exec bash"])
+        XCTAssertEqual(args[0], "-e")
+        XCTAssertEqual(args[2], "-l")
+        XCTAssertEqual(args[3], "-c")
+        XCTAssertTrue(args[4].contains("assume -c 'test-profile'"))
     }
 
     func testGhosttyCommand_WithQuotesInProfile() {
         let args = GhosttyCommands.ghosttyArgs(profileName: "it's-my-profile", forConsole: false)
-        XCTAssertEqual(args, ["-e", "bash", "-c", "assume 'it'\\''s-my-profile'; exec bash"])
+        XCTAssertEqual(args[0], "-e")
+        XCTAssertEqual(args[2], "-l")
+        XCTAssertEqual(args[3], "-c")
+        XCTAssertTrue(args[4].contains("assume 'it'\\''s-my-profile'"))
     }
 
     // MARK: - Edge Cases
