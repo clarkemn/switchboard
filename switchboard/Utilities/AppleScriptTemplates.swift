@@ -84,12 +84,12 @@ enum AppleScriptTemplates {
             activate
         end tell
 
-        delay 0.5
+        delay 0.8
 
         tell application "System Events"
             tell process "Warp"
                 keystroke "n" using command down
-                delay 0.3
+                delay 1.0
                 keystroke "assume '\(escapedProfile)'"
                 keystroke return
             end tell
@@ -107,12 +107,12 @@ enum AppleScriptTemplates {
             activate
         end tell
 
-        delay 0.5
+        delay 0.8
 
         tell application "System Events"
             tell process "Warp"
                 keystroke "n" using command down
-                delay 0.3
+                delay 1.0
                 keystroke "assume -c '\(escapedProfile)'"
                 keystroke return
             end tell
@@ -136,7 +136,9 @@ enum GhosttyCommands {
     static func ghosttyArgs(profileName: String, forConsole: Bool) -> [String] {
         let escapedProfile = profileName.escapedForShell
         let assumeCmd = forConsole ? "assume -c" : "assume"
-        return ["-e", "bash", "-c", "\(assumeCmd) '\(escapedProfile)'; exec bash"]
+        let userShell = ProcessInfo.processInfo.environment["SHELL"] ?? "/bin/zsh"
+        let shellName = URL(fileURLWithPath: userShell).lastPathComponent
+        return ["-e", userShell, "-l", "-c", "\(assumeCmd) '\(escapedProfile)'; exec \(shellName)"]
     }
 }
 
