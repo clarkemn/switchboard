@@ -163,6 +163,7 @@ class TerminalService {
         let process = Process()
         process.executableURL = ghosttyURL
         process.arguments = args
+        process.currentDirectoryURL = URL(fileURLWithPath: NSHomeDirectory())
 
         do {
             try process.run()

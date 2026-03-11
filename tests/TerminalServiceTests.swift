@@ -57,10 +57,11 @@ final class TerminalServiceTests: XCTestCase {
         XCTAssertFalse(service.requiresAccessibilityPermissions(.ghostty))
     }
 
-    // MARK: - Warp and Ghostty AppleScript templates use System Events
+    // MARK: - Warp AppleScript template uses System Events
 
-    // These templates must use System Events keystrokes (the reason they need
-    // Accessibility permissions in the first place).
+    // Warp has no AppleScript dictionary, so its script drives input via System Events
+    // keystrokes (the reason it needs Accessibility permissions).
+    // Ghostty is launched via CLI Process, not AppleScript, so it has no System Events usage.
 
     func testWarpScript_UsesSystemEvents() {
         let script = AppleScriptTemplates.warp(profileName: "test")
