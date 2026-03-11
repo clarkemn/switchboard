@@ -138,7 +138,7 @@ enum GhosttyCommands {
         let assumeCmd = forConsole ? "assume -c" : "assume"
         let userShell = ProcessInfo.processInfo.environment["SHELL"] ?? "/bin/zsh"
         let shellName = URL(fileURLWithPath: userShell).lastPathComponent
-        return ["-e", userShell, "-l", "-c", "\(assumeCmd) '\(escapedProfile)'; exec \(shellName)"]
+        return ["-e", userShell, "-l", "-i", "-c", "\(assumeCmd) '\(escapedProfile)'; exec \(shellName)"]
     }
 }
 
