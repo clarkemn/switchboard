@@ -16,7 +16,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "5.9"
+          swift-version: "5.10.1"
 
       - name: Build
         run: swift build
@@ -33,7 +33,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "5.9"
+          swift-version: "5.10.1"
 
       - name: Build App Bundle
         run: ./build.sh release
